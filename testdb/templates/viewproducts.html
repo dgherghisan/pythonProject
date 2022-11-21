@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-3">
+  <hr>
+  <!-- this code block is used to loop the data in the database -->
+  {% for data in queryset %}
+  <div class="list-group mb-3">
+    <p>Name: {{data.name}}</p>
+    <p>Price: {{data.price}}</p>
+    {% load static %}
+    <img src="{% static data.image %}" alt="My image" class="img-fluid">
+  </div>
+  {% endfor %}
+  <hr>
+</div>
+{% endblock %}
