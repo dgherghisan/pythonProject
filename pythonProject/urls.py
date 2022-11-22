@@ -23,5 +23,5 @@ router = routers.DefaultRouter()
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('testdb.urls')),
+    path('', include('testdb.urls', namespace='testdb.urls')),
 ]

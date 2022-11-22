@@ -8,8 +8,18 @@
   <div class="list-group mb-3">
     <p>Name: {{data.name}}</p>
     <p>Price: {{data.price}}</p>
+
     {% load static %}
     <img src="{% static data.image %}" alt="My image" class="img-fluid">
+
+    <form action="{% url 'testdb:edit_product' id=data.id %}" method="post">
+      {% csrf_token %}
+      <button type="submit" id="edit" value="edit">Edit</button>
+    </form>
+    <form action="{% url 'testdb:delete_product' id=data.id %}" method="post">
+      {% csrf_token %}
+      <button type="submit" id="delete" value="delete">Delete</button>
+    </form>
   </div>
   {% endfor %}
   <hr>
