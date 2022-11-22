@@ -1,6 +1,6 @@
 db.sqlite3
 /venv
-/testdb/static/upload/
+/testdb/static/upload/.
 .idea
 __pycache__
 /testdb/__pychache__
