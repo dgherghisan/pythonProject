@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load rest_framework %}
 
 {% block content %}
 <h2 class="text-center">Create new product</h2>
@@ -7,22 +8,20 @@
            <!-- for csrf token -->
             {% csrf_token %}
             <div class="form-group mb-3">
-                <!-- double curly braces is used to display data from the database -->
-                {{form.name}}
+                <input type="text" name="name" class="form-control" placeholder="name" id="name" required="">
             </div>
             <div class="form-group mb-3">
-                <!-- double curly braces is used to display data from the database -->
-                {{form.price}}
+                <input type="text" name="price" class="form-control" placeholder="price" id="price" required="">
             </div>
             <div class="form-group mb-3">
-                <!-- double curly braces is used to display data from the database -->
                 <label>Attach image:
-                    {{form.image}}
+                    <input type="file" name="image" required="" id="id_image" multiple accept="image/*" >
                 </label>
             </div>
             <input type="submit" class="btn btn-outline-success" >
 
         </form>
+        <a href="{% url 'testdb:products' %}">See products list</a>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"
@@ -33,7 +32,10 @@
     $(document).on('submit','#product-form',function(e){
         e.preventDefault();
         var data = new FormData();
-        data.append("image", $("input[id^='id_image']")[0].files[0]);
+        var files = $("input[id^='id_image']")[0].files;
+        for (i=0; i<files.length; i++) {
+            data.append("image", files[i]);
+            }
         data.append("csrfmiddlewaretoken", $('input[name=csrfmiddlewaretoken]').val());
         data.append("name", $("#name").val());
         data.append("price", $("#price").val());

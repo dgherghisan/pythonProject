@@ -11,10 +11,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-import environ
-
-env = environ.Env()
-environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = "django-insecure-!q6o7m22fb$^@6_n$(x$%e_6@-rg-pl-ab)q7#(1rzpzcktu*-"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',  # Needed if you are adding the products from home page?
+    'rest_framework',
     'testdb',
 ]
 
@@ -57,10 +53,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'pythonProject.urls'
 
+TEMPLATE_DIR = BASE_DIR / "templates/"
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATE_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,6 +73,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pythonProject.wsgi.application'
 
+MEDIA_URL = "testdb/static/"
+MEDIA_ROOT = BASE_DIR / "testdb/static/"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -82,11 +82,11 @@ WSGI_APPLICATION = 'pythonProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': env("DB_HOST"),
-        'PORT': env("DB_PORT"),
+        'NAME': "testdb",
+        'USER': "postgres",
+        'PASSWORD': "postgres",
+        'HOST': "localhost",
+        'PORT': "5432",
     }
 }
 
