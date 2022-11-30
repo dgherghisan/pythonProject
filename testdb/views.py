@@ -1,71 +1,57 @@
-from django.shortcuts import get_object_or_404, render, redirect
+from rest_framework import permissions
+from rest_framework.generics import (
+    ListAPIView,
+    ListCreateAPIView,
+    RetrieveDestroyAPIView,
+    RetrieveUpdateAPIView,
+)
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+
 from .models import Product
-from .forms import ProductForm
+from .serializers import ProductSerializer
 
 
-def create_product(request):
-    form = ProductForm(request.POST, request.FILES)
-    if request.method == "POST":
-        if form.is_valid():
-            img = request.FILES['image']
-            location = "upload/" + img.name
-            post = form.save(commit=False)
-            post.author = request.user
-            post.image = location
-            post.save()
-            handle_uploaded_file(img)
-        else:
-            form = ProductForm()
-    context = {
-        "form": form
-    }
-    return render(request, 'createproduct.html', context)
+class ProductCreateAPIView(ListCreateAPIView):
+    queryset = Product.objects.all().order_by('created_at')
+    serializer_class = ProductSerializer
+    template_name = 'create_product.html'
+    renderer_classes = [TemplateHTMLRenderer]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.is_valid(raise_exception=True)
+        image = serializer.validated_data.get("image")
+        name = serializer.validated_data.get("name")
+        price = serializer.validated_data.get("price")
+        author = self.request.user
+
+        obj_list = []
+        for img in image:
+            obj_list.append(Product(name=name, price=price, image=img, author=author))
+
+        if obj_list:
+            Product.objects.bulk_create(obj_list)
 
 
-def view_product(request):
-    # Retrieve data from db
-    queryset = Product.objects.all()
-    context = {
-        'queryset': queryset
-    }
-    return render(request, 'viewproducts.html', context)
+class ProductListAPIView(ListAPIView):
+    serializer_class = ProductSerializer
+    renderer_classes = [TemplateHTMLRenderer]
+
+    def get(self, request, *args, **kwargs):
+        queryset = Product.objects.all().order_by('created_at')
+        return Response({'queryset': queryset}, template_name='view_products.html')
 
 
-def delete_product(request, id):
-    product = get_object_or_404(Product, pk=id)
-
-    if request.method == 'POST':
-        product.delete()
-        return redirect('/products/')
-
-    queryset = Product.objects.all()
-    context = {
-        'queryset': queryset
-    }
-    return render(request, 'viewproducts.html', context)
+class ProductUpdateAPIView(RetrieveUpdateAPIView):
+    queryset = Product.objects.all().order_by('created_at')
+    serializer_class = ProductSerializer
+    lookup_field = "pk"
+    permission_classes = [permissions.IsAuthenticated]
 
 
-def edit_product(request, id):
-    product = get_object_or_404(Product, pk=id)
-    form = ProductForm(request.POST, instance=product)
-    if request.method == "POST":
-        if form.is_valid():
-            img = request.FILES['image']
-            location = "upload/" + img.name
-            post = form.save(commit=False)
-            post.image = location
-            post.save()
-            handle_uploaded_file(img)
-            return redirect('/products/', pk=id)
-        else:
-            form = ProductForm(instance=product)
-    context = {
-        "form": form
-    }
-    return render(request, 'editproduct.html', context)
-
-
-def handle_uploaded_file(f):
-    with open('testdb/static/upload/' + f.name, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+class ProductDestroyAPIView(RetrieveDestroyAPIView):
+    queryset = Product.objects.all().order_by('created_at')
+    serializer_class = ProductSerializer
+    lookup_field = "pk"
+    permission_classes = [permissions.IsAuthenticated]

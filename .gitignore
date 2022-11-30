@@ -1,5 +1,8 @@
 db.sqlite3
+pythonProject/.env
 /venv
 .idea
-__pycache__/
-/testdb/__pychache__/
+__pycache__
+testdb/__pychache__/
+pythonProject/__pycache__/
+/testdb/static/images
