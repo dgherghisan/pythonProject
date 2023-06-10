@@ -10,14 +10,12 @@
     <p>Price: {{data.price}}</p>
 
     {% load static %}
-    <img src="{% static data.image %}" alt="My image" class="img-fluid">
+    <a href="{% static data.image %}" > Image link </a>
 
-    <form action="{% url 'testdb:edit_product' id=data.id %}" method="post">
-      {% csrf_token %}
+    <form action="{% url 'testdb:edit_product' pk=data.id %}">
       <button type="submit" id="edit" value="edit">Edit</button>
     </form>
-    <form action="{% url 'testdb:delete_product' id=data.id %}" method="post">
-      {% csrf_token %}
+    <form action="{% url 'testdb:delete_product' pk=data.id %}">
       <button type="submit" id="delete" value="delete">Delete</button>
     </form>
   </div>
